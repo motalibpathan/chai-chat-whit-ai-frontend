@@ -152,8 +152,16 @@ const Chat = () => {
             )}
           </div>
         </div>
+        <div className="flex justify-center items-center">
+          <label className="md:hidden relative inline-flex justify-center items-center cursor-pointer ">
+            <input type="checkbox" value="" className="sr-only peer" />
+            <div className="w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+          </label>
+        </div>
       </div>
-      <div className="mx-4 max-w-[1200px] lg:mx-auto flex items-center gap-3">
+
+      <div className="mx-2 max-w-[1200px] lg:mx-auto flex items-center gap-3">
         <div className="bg-[#eaeaea] dark:bg-gray-600 max-w-[1200px] mx-auto w-full shadow-lg rounded-md mt-[-100px] ">
           <div className="flex gap-1.5">
             <div className="lg:block hidden w-[280px] h-[530px] p-[20px] bg-white dark:bg-gray-800 ">
@@ -316,7 +324,7 @@ const Chat = () => {
             </div>
           </div>
         </div>
-        <label className="hidden relative lg:inline-flex items-center cursor-pointer">
+        <label className="hidden relative md:inline-flex items-center cursor-pointer">
           <input type="checkbox" value="" className="sr-only peer" />
           <div className="w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
           <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
