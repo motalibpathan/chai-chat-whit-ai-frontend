@@ -28,7 +28,7 @@ const Signup = () => {
       {loading && <LoadingBar />}
       <div className="bg-white dark:bg-gray-800 min-h-screen flex items-center justify-center">
         <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm border">
-          <h1 className="text-lg font-medium mb-4">Signup</h1>
+          <h1 className="text-xl font-medium mb-4 text-center">Signup</h1>
           <form onSubmit={handleSubmit}>
             <label className="block font-medium mb-2">
               Name
@@ -65,20 +65,19 @@ const Signup = () => {
           <div className="w-full my-4 space-y-3">
             <div className="flex items-center gap-2">
               <div className="border-t-2 w-full"></div>
-              <div className="text-sm text-gray-600 w-full">
-                Or continue with
-              </div>
+              <div className="text-sm text-gray-600 ">Or</div>
               <div className="border-t-2 w-full"></div>
             </div>
             <button
               onClick={googleLogin}
-              className="bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 w-full flex items-center duration-500"
+              className="bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 w-full flex justify-center items-center duration-500"
             >
-              <FaGoogle className="mr-2" /> Continue with Google
+              <FaGoogle className="mr-2" />{" "}
+              <span className="">Continue with Google</span>
             </button>
             <button
               onClick={facebookLogin}
-              className="bg-blue-500 text-white py-2 px-4  rounded-full hover:bg-blue-600 w-full flex items-center duration-500"
+              className="bg-blue-500 text-white py-2 px-4  rounded-full hover:bg-blue-600 w-full flex justify-center items-center duration-500"
             >
               <FaFacebookF className="mr-2" /> Continue with Facebook
             </button>
