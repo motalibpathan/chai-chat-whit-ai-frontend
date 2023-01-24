@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import moment from "moment/moment";
+import React, { useContext, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import useDarkMode from "../hooks/useDarkMode";
 
 const Chat = () => {
@@ -16,7 +18,7 @@ const Chat = () => {
         {
           from: "Eliza",
           message: "Hi, my name is Eliza. What is weighing on your mind?",
-          time: "23:32, Today",
+          time: new Date(),
         },
       ],
     },
@@ -31,7 +33,7 @@ const Chat = () => {
         {
           from: "William Afton",
           message: "Can I help you doll?",
-          time: "23:34, Today",
+          time: new Date(),
         },
       ],
     },
@@ -47,7 +49,7 @@ const Chat = () => {
           from: "Step Mom",
           message:
             "Hey, sweetipie. I'm a conversational AI. Sometimes I get a bit confused, but keep explaining to me and telling me exactly what you like and I'll do my best to make you happy 😉 😈",
-          time: "23:35, Today",
+          time: new Date(),
         },
       ],
     },
@@ -62,18 +64,58 @@ const Chat = () => {
         {
           from: "aliza",
           message: "Hi, my name is Eliza. What is weighing on your mind?",
-          time: "23:32, Today",
+          time: new Date(),
         },
       ],
     },
   ];
   const [selectedChat, setSelectedChat] = useState(chats[0]);
   const [colorTheme, setTheme] = useDarkMode();
+  const inputRef = useRef(null);
+
+  const { user, error, loading, logOut } = useContext(AuthContext);
+  const [isLoadingMsg, setIsLoadingMsg] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const navigate = useNavigate();
+
+  if (!loading && !user) {
+    navigate("/login");
+  }
+
   const handleClick = (chat) => {
     const selected = chats.find((c) => c.id === chat.id);
     setSelectedChat(selected);
   };
+
+  const handleGetMessage = () => {
+    const input = inputRef.current.value;
+    if (input === "") return;
+    const newChatLog = [
+      ...selectedChat.messages,
+      { from: "me", message: `${input}`, time: new Date().toString() },
+    ];
+    console.log(newChatLog);
+    setSelectedChat((p) => ({ ...p, messages: newChatLog }));
+    setIsLoadingMsg(true);
+    fetch(`https://openai-testing.onrender.com/text-completion/${input}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setIsLoadingMsg(false);
+        const newMsg = [
+          ...newChatLog,
+          { from: "gpt", message: `${data.choices[0].text}`, time: new Date() },
+        ];
+        setSelectedChat((p) => ({ ...p, messages: newMsg }));
+      })
+      .catch((err) => {
+        setIsLoadingMsg(false);
+        console.log(err);
+      });
+    // setChatLog(newChatLog);
+    inputRef.current.value = "";
+  };
+
   return (
     <div>
       <div className="bg-gradient-to-r from-[#daae51] to-[#d53369] pt-[3.5em] pb-[7.5em]">
@@ -85,21 +127,36 @@ const Chat = () => {
             <span className="cursor-pointer ">Vision</span>
             <span className="cursor-pointer ">About</span>
           </div>
-          <div className="cursor-pointer">
+          <div
+            onClick={() => setIsMenuOpen((p) => !p)}
+            className="cursor-pointer relative"
+          >
             <img
               className="w-[35px] h-[35px] rounded-full object-cover"
               src={
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-SnDtnoTbs_JJtNW62ALeA4gKPtpCGcQ5CnVEJNNAddxjuLwrbo1c16rExrxYL4xLmIw&usqp=CAU"
+                user?.avatar
+                  ? user?.avatar
+                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-SnDtnoTbs_JJtNW62ALeA4gKPtpCGcQ5CnVEJNNAddxjuLwrbo1c16rExrxYL4xLmIw&usqp=CAU"
               }
               alt=""
             />
+            {isMenuOpen && (
+              <div className="absolute w-[200px] to-5 right-0 bg-white p-5 rounded-md shadow-lg z-10">
+                <button
+                  onClick={logOut}
+                  className="py-1.5 px-2 bg-rose-500 w-full rounded-md text-white"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <div className="mx-4">
-        <div className="bg-[#eaeaea] dark:bg-gray-600 max-w-[1200px] mx-auto w-full shadow-lg rounded-md mt-[-100px]">
+      <div className="mx-4 max-w-[1200px] lg:mx-auto flex items-center gap-3">
+        <div className="bg-[#eaeaea] dark:bg-gray-600 max-w-[1200px] mx-auto w-full shadow-lg rounded-md mt-[-100px] ">
           <div className="flex gap-1.5">
-            <div className="lg:block hidden w-[280px] h-[530px] p-[20px] bg-white dark:bg-gray-800">
+            <div className="lg:block hidden w-[280px] h-[530px] p-[20px] bg-white dark:bg-gray-800 ">
               {chats.map((single) => (
                 <div
                   key={single.id}
@@ -130,12 +187,21 @@ const Chat = () => {
                 </div>
               ))}
               <div className="flex justify-center">
-                <button
-                  onClick={() => navigate("/login")}
-                  className="bg-primary text-white  py-2 px-4 rounded-full hover:bg-[#c9004a] duration-500 text-center mt-5"
-                >
-                  Sign in
-                </button>
+                {user ? (
+                  <button
+                    onClick={() => logOut()}
+                    className="bg-primary text-white  py-2 px-4 rounded-full hover:bg-[#c9004a] duration-500 text-center mt-5"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="bg-primary text-white  py-2 px-4 rounded-full hover:bg-[#c9004a] duration-500 text-center mt-5"
+                  >
+                    Sign in
+                  </button>
+                )}
               </div>
               <div className="flex justify-center mt-3">
                 <button
@@ -147,7 +213,7 @@ const Chat = () => {
               </div>
             </div>
             <div className="flex-1 h-[530px] bg-white dark:bg-gray-700 relative">
-              <div className="absolute top-0 left-0 w-full border-b-2 dark:border-gray-600">
+              <div className="bg-white dark:bg-gray-600 absolute top-0 left-0 w-full border-b-2 dark:border-gray-600">
                 <div className="flex items-start gap-3 p-5">
                   <div>
                     <img
@@ -161,45 +227,88 @@ const Chat = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-[80px]">
-                {selectedChat.messages.map((message, i) => (
-                  <div key={message + i} className="p-5">
-                    <div className="flex items-center gap-3 ">
-                      <div className="text-gray-800 dark:text-gray-200 text-[14px]">
-                        {message.time}
-                      </div>
-                      <div>
-                        <img
-                          className="w-[35px] h-[35px] rounded-full object-cover"
-                          src={selectedChat.avatar}
-                          alt=""
-                        />
-                      </div>
-                    </div>
+              <div className="mt-[80px] max-h-[400px] flex flex-col-reverse overflow-y-scroll messages ">
+                <div className="pb-3">
+                  {selectedChat.messages.map((message, i) => (
                     <div
-                      className="text-[16px] text-[#444] dark:text-gray-200 bg-[#efefef] dark:bg-gray-500 py-[0.5em]
-                  px-[2em] rounded-[2em] lg:max-w-[60%] max-w-[70%] inline-block mt-3"
+                      key={message + i}
+                      className={`${
+                        message.from === "me" ? "text-right" : "text-left"
+                      } p-5`}
                     >
-                      {message.message}
+                      <div
+                        className={`${
+                          message.from === "me"
+                            ? "justify-end"
+                            : "justify-start"
+                        } flex items-center gap-3 `}
+                      >
+                        <div className="text-gray-800 dark:text-gray-200 text-[14px]">
+                          {moment(message.time).calendar()}
+                        </div>
+                        <div>
+                          <img
+                            className="w-[35px] h-[35px] rounded-full object-cover"
+                            src={
+                              message.from === "me"
+                                ? user.avatar
+                                : selectedChat.avatar
+                            }
+                            alt=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className="text-[16px] text-[#444] dark:text-gray-200 bg-[#efefef] dark:bg-gray-500 py-[0.5em]
+                  px-[2em] rounded-[2em] lg:max-w-[60%] max-w-[70%] inline-block mt-3"
+                      >
+                        {message.message}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
               <div className="absolute bottom-0 left-0 w-full">
+                {isLoadingMsg && (
+                  <div className="flex justify-center">
+                    <div className="relative ">
+                      <div class="lds-ellipsis">
+                        <div className="bg-gray-800 dark:bg-white"></div>
+                        <div className="bg-gray-800 dark:bg-white"></div>
+                        <div className="bg-gray-800 dark:bg-white"></div>
+                        <div className="bg-gray-800 dark:bg-white"></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="flex mx-5 my-3 px-2 py-2">
-                  <div className="bg-[#ecedf2] dark:bg-gray-400 px-3 border-t border-l border-b border-r-none border-[#9aa4b9] rounded-tl-[5px] rounded-bl-[5px] flex items-center">
+                  <div
+                    onClick={handleGetMessage}
+                    className="bg-[#ecedf2] dark:bg-gray-400 px-3 border-t border-l border-b border-r-none border-[#9aa4b9] rounded-tl-[5px] rounded-bl-[5px] flex items-center"
+                  >
                     <FaPaperPlane className="w-[1em]" />{" "}
                   </div>
                   <input
+                    ref={inputRef}
                     className="flex-1 border rounded-tr-[5px] rounded-br-[5px] outline-primary dark:outline-none text-[#283040] text-[1em] p-[0.5em] w-[1%] dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                     type="text"
                     placeholder="Enter text here..."
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleGetMessage();
+                      }
+                    }}
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <label className="hidden relative lg:inline-flex items-center cursor-pointer">
+          <input type="checkbox" value="" className="sr-only peer" />
+          <div className="w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+        </label>
       </div>
     </div>
   );
