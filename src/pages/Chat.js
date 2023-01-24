@@ -73,7 +73,7 @@ const Chat = () => {
   const [colorTheme, setTheme] = useDarkMode();
   const inputRef = useRef(null);
 
-  const { user, error, loading, logOut } = useContext(AuthContext);
+  const { user, loading, logOut } = useContext(AuthContext);
   const [isLoadingMsg, setIsLoadingMsg] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

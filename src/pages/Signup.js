@@ -61,6 +61,7 @@ const Signup = () => {
               Sign Up
             </button>
           </form>
+          {error && <p>{error}</p>}
           <div className="w-full my-4 space-y-3">
             <div className="flex items-center gap-2">
               <div className="border-t-2 w-full"></div>
