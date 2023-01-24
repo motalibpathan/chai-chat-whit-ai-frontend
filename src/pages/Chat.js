@@ -91,7 +91,7 @@ const Chat = () => {
 
   const handleGetMessage = () => {
     const input = inputRef.current.value;
-    if (input === "") return;
+    if (input === "" || isLoadingMsg) return;
     const newChatLog = [
       ...selectedChat.messages,
       { from: "me", message: `${input}`, time: new Date().toString() },
