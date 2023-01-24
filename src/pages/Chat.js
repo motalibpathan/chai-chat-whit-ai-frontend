@@ -2,6 +2,7 @@ import moment from "moment/moment";
 import React, { useContext, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { TypeAnimation } from "react-type-animation";
 import { AuthContext } from "../context/AuthContext";
 import useDarkMode from "../hooks/useDarkMode";
 
@@ -263,7 +264,17 @@ const Chat = () => {
                         className="text-[16px] text-[#444] dark:text-gray-200 bg-[#efefef] dark:bg-gray-500 py-[0.5em]
                   px-[2em] rounded-[2em] lg:max-w-[60%] max-w-[70%] inline-block mt-3"
                       >
-                        {message.message}
+                        {message.from === "me" ? (
+                          message.message
+                        ) : (
+                          <TypeAnimation
+                            sequence={[message.message]}
+                            wrapper="p"
+                            cursor={false}
+                            repeat={1}
+                            style={{ fontSize: "1em" }}
+                          />
+                        )}
                       </div>
                     </div>
                   ))}
