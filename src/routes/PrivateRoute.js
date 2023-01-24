@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }) => {
     return (
       <div className="flex w-full h-screen justify-center items-center">
         <div className="relative ">
-          <div class="lds-ellipsis">
+          <div className="lds-ellipsis">
             <div className="bg-gray-800 dark:bg-white"></div>
             <div className="bg-gray-800 dark:bg-white"></div>
             <div className="bg-gray-800 dark:bg-white"></div>

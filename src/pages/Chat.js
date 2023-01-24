@@ -116,6 +116,9 @@ const Chat = () => {
     inputRef.current.value = "";
   };
 
+  const unknownAvatar =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-SnDtnoTbs_JJtNW62ALeA4gKPtpCGcQ5CnVEJNNAddxjuLwrbo1c16rExrxYL4xLmIw&usqp=CAU";
+
   return (
     <div>
       <div className="bg-gradient-to-r from-[#daae51] to-[#d53369] pt-[3.5em] pb-[7.5em]">
@@ -133,11 +136,7 @@ const Chat = () => {
           >
             <img
               className="w-[35px] h-[35px] rounded-full object-cover"
-              src={
-                user?.avatar
-                  ? user?.avatar
-                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-SnDtnoTbs_JJtNW62ALeA4gKPtpCGcQ5CnVEJNNAddxjuLwrbo1c16rExrxYL4xLmIw&usqp=CAU"
-              }
+              src={user?.avatar ? user?.avatar : unknownAvatar}
               alt=""
             />
             {isMenuOpen && (
@@ -252,6 +251,8 @@ const Chat = () => {
                             src={
                               message.from === "me"
                                 ? user.avatar
+                                  ? user.avatar
+                                  : unknownAvatar
                                 : selectedChat.avatar
                             }
                             alt=""
@@ -272,7 +273,7 @@ const Chat = () => {
                 {isLoadingMsg && (
                   <div className="flex justify-center">
                     <div className="relative ">
-                      <div class="lds-ellipsis">
+                      <div className="lds-ellipsis">
                         <div className="bg-gray-800 dark:bg-white"></div>
                         <div className="bg-gray-800 dark:bg-white"></div>
                         <div className="bg-gray-800 dark:bg-white"></div>
